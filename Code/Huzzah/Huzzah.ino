@@ -65,7 +65,7 @@ void initialiseLCDScreen(){
   Config_Init();
   LCD_Init();
   
-  LCD_SetBacklight(100);
+  LCD_SetBacklight(1000);
   Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 90, BLACK);
   Paint_Clear(BLACK);
 }
