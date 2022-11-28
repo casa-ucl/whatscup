@@ -29,7 +29,7 @@
 # THE SOFTWARE.
 #
 ******************************************************************************/
-#include "DEV_Config.h"
+#include "LCD_DEV_Config.h"
 
 void GPIO_Init()
 {
