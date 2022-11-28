@@ -20,7 +20,7 @@ const char* mqtt_server = "mqtt.cetools.org";
 
 //Internal fields
 WiFiClient espClient;
-PubSubClient client(espClient);
+
 char msg[50];
 int currentMood = -1;
 Timezone GB;
@@ -89,4 +89,3 @@ void drawMoodOnScreen(int mood){
     Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
   } 
 }
-
