@@ -47,10 +47,11 @@
 /**
  * GPIO config
 **/
-#define DEV_CS_PIN  10
-#define DEV_DC_PIN  7
-#define DEV_RST_PIN 8
-#define DEV_BL_PIN  9
+#define DEV_CS_PIN  0
+#define DEV_DC_PIN  2
+#define DEV_RST_PIN 15
+#define DEV_BL_PIN  16
+
 
 
 /**
@@ -78,4 +79,3 @@
 /*-----------------------------------------------------------------------------*/
  void Config_Init();
 #endif
-
