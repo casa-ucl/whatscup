@@ -86,6 +86,6 @@ void drawMoodOnScreen(int mood){
     currentMood = 1;
     Serial.println("Drawing happy face");
     Paint_Clear(BLACK);
-    Paint_DrawImage(gImage_happy, 5, 4, 165, 164); 
+    Paint_DrawImage(gImage_happy, 30, 30, 165, 164); 
   } 
 }
