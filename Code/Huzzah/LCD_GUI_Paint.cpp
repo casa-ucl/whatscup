@@ -175,6 +175,7 @@ void Paint_Clear(UWORD Color)
   LCD_SetCursor(0, 0, Paint.WidthByte , Paint.HeightByte);
   for (UWORD Y = 0; Y < Paint.HeightByte; Y++) {
     for (UWORD X = 0; X < Paint.WidthByte; X++ ) {//8 pixel =  1 byte
+      yield();
       LCD_WriteData_Word(Color);
     }
   }
@@ -193,6 +194,7 @@ void Paint_ClearWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWOR
   UWORD X, Y;
   for (Y = Ystart; Y < Yend; Y++) {
     for (X = Xstart; X < Xend; X++) {//8 pixel =  1 byte
+      yield();
       Paint_SetPixel(X, Y, Color);
     }
   }
@@ -217,7 +219,9 @@ void Paint_DrawPoint( UWORD Xpoint,       UWORD Ypoint, UWORD Color,
     int16_t XDir_Num , YDir_Num;
     if (Dot_FillWay == DOT_FILL_AROUND) {
         for (XDir_Num = 0; XDir_Num < 2*Dot_Pixel - 1; XDir_Num++) {
+            yield();  
             for (YDir_Num = 0; YDir_Num < 2 * Dot_Pixel - 1; YDir_Num++) {
+                yield();
                 if(Xpoint + XDir_Num - Dot_Pixel < 0 || Ypoint + YDir_Num - Dot_Pixel < 0)
                     break;
                 // printf("x = %d, y = %d\r\n", Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel);
@@ -227,6 +231,7 @@ void Paint_DrawPoint( UWORD Xpoint,       UWORD Ypoint, UWORD Color,
     } else {
         for (XDir_Num = 0; XDir_Num <  Dot_Pixel; XDir_Num++) {
             for (YDir_Num = 0; YDir_Num <  Dot_Pixel; YDir_Num++) {
+                yield();
                 Paint_SetPixel(Xpoint + XDir_Num - 1, Ypoint + YDir_Num - 1, Color);
             }
         }
@@ -266,6 +271,7 @@ void Paint_DrawLine(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
     char Dotted_Len = 0;
 
     for (;;) {
+        yield();
         Dotted_Len++;
         //Painted dotted line, 2 point is really virtual
         if (Line_Style == LINE_STYLE_DOTTED && Dotted_Len % 3 == 0) {
@@ -352,6 +358,7 @@ void Paint_DrawCircle(  UWORD X_Center, UWORD Y_Center, UWORD Radius,
     if (Draw_Fill == DRAW_FILL_FULL) {
         while (XCurrent <= YCurrent ) { //Realistic circles
             for (sCountY = XCurrent; sCountY <= YCurrent; sCountY ++ ) {
+                yield();
                 Paint_DrawPoint(X_Center + XCurrent, Y_Center + sCountY, Color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//1
                 Paint_DrawPoint(X_Center - XCurrent, Y_Center + sCountY, Color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//2
                 Paint_DrawPoint(X_Center - sCountY, Y_Center + XCurrent, Color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//3
@@ -371,6 +378,7 @@ void Paint_DrawCircle(  UWORD X_Center, UWORD Y_Center, UWORD Radius,
         }
     } else { //Draw a hollow circle
         while (XCurrent <= YCurrent ) {
+            yield();
             Paint_DrawPoint(X_Center + XCurrent, Y_Center + YCurrent, Color, Line_width, DOT_STYLE_DFT);//1
             Paint_DrawPoint(X_Center - XCurrent, Y_Center + YCurrent, Color, Line_width, DOT_STYLE_DFT);//2
             Paint_DrawPoint(X_Center - YCurrent, Y_Center + XCurrent, Color, Line_width, DOT_STYLE_DFT);//3
@@ -416,7 +424,7 @@ void Paint_DrawChar(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
 
   for ( Page = 0; Page < Font->Height; Page ++ ) {
     for ( Column = 0; Column < Font->Width; Column ++ ) {
-
+      yield();
       //To determine whether the font background color and screen background color is consistent
       if (FONT_BACKGROUND == Color_Background) { //this process is to speed up the scan
         if (pgm_read_byte(ptr) & (0x80 >> (Column % 8)))
