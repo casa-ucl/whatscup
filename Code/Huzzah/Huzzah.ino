@@ -66,7 +66,7 @@ void initialiseLCDScreen(){
   LCD_Init();
   
   LCD_SetBacklight(1000);
-  Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 90, BLACK);
+  Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 0, BLACK);
   Paint_Clear(BLACK);
 }
 
@@ -86,6 +86,6 @@ void drawMoodOnScreen(int mood){
     currentMood = 1;
     Serial.println("Drawing happy face");
     Paint_Clear(BLACK);
-    Paint_DrawImage(gImage_happy, 30, 30, 165, 164); 
+    Paint_DrawImage(gImage_happy, 0, 0, 240, 240); 
   } 
 }
