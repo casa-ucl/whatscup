@@ -1,3 +1,6 @@
+#include <ArduinoJson.h>
+#include <ArduinoJson.hpp>
+
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <PubSubClient.h>
@@ -12,6 +15,7 @@ ESP8266WebServer server(80);
 const char* mqtt_server = "mqtt.cetools.org";
 WiFiClient espClient;//handle wifi messages
 PubSubClient client(espClient);//handle MQTT messages, pass wificlient to connect
+StaticJsonDocument<200> doc;// Allocate the JSON document
 
 void setup() {
   Serial.begin(115200);
@@ -34,6 +38,40 @@ void loop() {
   }
 
   client.loop();
+
+  /*char json[] = "{\"home_score\": 1,\"away_score\": 0,\"home_team_en\": \"England\",\"away_team_en\": \"France\",\"finished\": \"false\",\"datetime\": \"2022-11-21 13:01\"}";
+  
+  ///////////////payload; //"{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}
+
+
+  DeserializationError error = deserializeJson(doc, json); // Deserialize the JSON document
+
+  // Test if parsing succeeds.
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+
+  // Fetch values.
+  //
+  // Most of the time, you can rely on the implicit casts.
+  // In other case, you can do doc["time"].as<long>();
+  int home_score = doc["home_score"];
+  int away_score = doc["away_score"];  
+  const char* home_team_en = doc["home_team_en"];
+  const char* away_team_en = doc["away_team_en"];  
+  const char* finished = doc["finished"];
+  const char* datatime = doc["datetime"];
+
+  // Print values.
+  Serial.println(home_score);
+  Serial.println(away_score);
+  Serial.println(home_team_en);
+  Serial.println(away_team_en);
+  Serial.println(finished);
+  Serial.println(datatime);*/
+  
 }
 
 void startWifi() {
@@ -70,6 +108,46 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
+
+  StaticJsonDocument<1024> doc;// Allocate the JSON document
+  String myString = String((char*)payload);
+  //String myString = String((char*)payload);
+  //const char* a = myString.c_str();
+  //char json[length] = myString;
+  //json = myString;  
+  //  = myString; //"{\"home_score\": 1,\"away_score\": 0,\"home_team_en\": \"England\",\"away_team_en\": \"France\",\"finished\": \"false\",\"datetime\": \"2022-11-21 13:01\"}";
+  
+  ///////////////payload; //"{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}
+
+
+  deserializeJson(doc, myString); // Deserialize the JSON document
+
+  // Test if parsing succeeds.
+  //if (error) {
+    //Serial.print(F("deserializeJson() failed: "));
+    //Serial.println(error.f_str());
+  ///  return;
+ // }
+
+  // Fetch values.
+  //
+  // Most of the time, you can rely on the implicit casts.
+  // In other case, you can do doc["time"].as<long>();
+  String home_team_en = doc["home_team_en"];
+  //int away_score = doc["away_score"];  
+  //const char* home_team_en = doc["home_team_en"];
+  //const char* away_team_en = doc["away_team_en"];  
+  //const char* finished = doc["finished"];
+  //const char* datatime = doc["datetime"];
+
+  // Print values.
+  //Serial.println(home_score);
+  //Serial.println(away_score);
+  Serial.println(home_team_en);
+  //Serial.println(away_team_en);
+  //Serial.println(finished);
+  //Serial.println(datatime);
+  
 
  /* // Switch on the LED if an 1 was received as first character
   if ((char)payload[0] == '1') {
