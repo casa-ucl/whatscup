@@ -5,6 +5,7 @@
 #include <Servo.h>
 int tempPin = 12;
 CRGB leds[NUM_LEDS];
+Servo myservo;
 
 int pos;
 
@@ -12,28 +13,12 @@ int pos;
 int a = 5;
 int b = 3;
 
-char current = False;
-char used = False;
+//char current = False;
+//char used = False;
 void setup() {
-
+  myservo.attach(12);
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
 
-}
-
-void loop() {
-
- LEDgoals();
- if (current != used & a < b){
-   servoflag1();
-   //update the used one into new one
- }
- if (current != used & a > b){
-   servoflag2();
-   //update the used one into new one
- }
- if(current != used & a = b){
-   myservo.write(0);
-   //update the used one into new one
 }
 
 void LEDgoals(){
@@ -65,7 +50,7 @@ void servoFlag1(){
         delay(1000);
         myservo.write(45);
       }
-}
+
 
 void servoFlag2(){
         myservo.write(0);
@@ -82,4 +67,23 @@ void servoFlag2(){
         delay(1000);
         myservo.write(135);
       }
+
+
+void loop() {
+
+ LEDgoals();
+ if (a>b){
+ //if (current != used & a < b){
+   servoFlag1();
+   delay(1000);
+   //update the used one into new one
+ }
+//  if (current != used & a > b){
+//    servoflag2();
+//    //update the used one into new one
+//  }
+//  if(current != used & a = b){
+//    myservo.write(0);
+//    //update the used one into new one
 }
+
