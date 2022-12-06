@@ -72,20 +72,6 @@ void initialiseLCDScreen(){
 
 //LCD screen output
 void drawMoodOnScreen(int mood){
-
-  if(mood == 0 && currentMood != 0)
-  {
-    currentMood = 0;
-    Serial.println("Drawing sad face");
     Paint_Clear(BLACK);
-    Paint_DrawImage(gImage_sad, 5, 5, 165, 160); 
-  }
-
-  if(mood == 1 && currentMood != 1)
-  {
-    currentMood = 1;
-    Serial.println("Drawing happy face");
-    Paint_Clear(BLACK);
-    Paint_DrawImage(gImage_happy, 0, 0, 240, 240); 
-  } 
+    Paint_DrawImage(gImage_Brazil, 0, 0, 120, 240); 
 }
