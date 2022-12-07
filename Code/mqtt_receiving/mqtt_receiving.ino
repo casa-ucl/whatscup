@@ -6,6 +6,14 @@
 #include <PubSubClient.h>
 #include "arduino_secrets.h"
 
+#include <FastLED.h>
+#include <Servo.h>
+#define LED_PIN     14
+#define NUM_LEDS    20
+
+CRGB leds[NUM_LEDS];
+Servo myservo;
+
 const char* ssid     = SECRET_SSID;
 const char* password = SECRET_PASS;
 const char* mqttuser = SECRET_MQTTUSER;
@@ -28,6 +36,9 @@ void setup() {
   client.setServer(mqtt_server, 1884);
   client.setCallback(callback);
 
+  myservo.attach(12);
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+
 }  
 
 void loop() {
@@ -39,39 +50,7 @@ void loop() {
 
   client.loop();
 
-  /*char json[] = "{\"home_score\": 1,\"away_score\": 0,\"home_team_en\": \"England\",\"away_team_en\": \"France\",\"finished\": \"false\",\"datetime\": \"2022-11-21 13:01\"}";
-  
-  ///////////////payload; //"{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}
 
-
-  DeserializationError error = deserializeJson(doc, json); // Deserialize the JSON document
-
-  // Test if parsing succeeds.
-  if (error) {
-    Serial.print(F("deserializeJson() failed: "));
-    Serial.println(error.f_str());
-    return;
-  }
-
-  // Fetch values.
-  //
-  // Most of the time, you can rely on the implicit casts.
-  // In other case, you can do doc["time"].as<long>();
-  int home_score = doc["home_score"];
-  int away_score = doc["away_score"];  
-  const char* home_team_en = doc["home_team_en"];
-  const char* away_team_en = doc["away_team_en"];  
-  const char* finished = doc["finished"];
-  const char* datatime = doc["datetime"];
-
-  // Print values.
-  Serial.println(home_score);
-  Serial.println(away_score);
-  Serial.println(home_team_en);
-  Serial.println(away_team_en);
-  Serial.println(finished);
-  Serial.println(datatime);*/
-  
 }
 
 void startWifi() {
@@ -111,51 +90,51 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   StaticJsonDocument<1024> doc;// Allocate the JSON document
   String myString = String((char*)payload);
-  //String myString = String((char*)payload);
-  //const char* a = myString.c_str();
   //char json[length] = myString;
-  //json = myString;  
-  //  = myString; //"{\"home_score\": 1,\"away_score\": 0,\"home_team_en\": \"England\",\"away_team_en\": \"France\",\"finished\": \"false\",\"datetime\": \"2022-11-21 13:01\"}";
-  
-  ///////////////payload; //"{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}
-
 
   deserializeJson(doc, myString); // Deserialize the JSON document
 
-  // Test if parsing succeeds.
-  //if (error) {
-    //Serial.print(F("deserializeJson() failed: "));
-    //Serial.println(error.f_str());
-  ///  return;
- // }
-
   // Fetch values.
-  //
-  // Most of the time, you can rely on the implicit casts.
-  // In other case, you can do doc["time"].as<long>();
+  int home_score = doc["home_score"]; 
+  int away_score = doc["away_score"];
   String home_team_en = doc["home_team_en"];
-  //int away_score = doc["away_score"];  
-  //const char* home_team_en = doc["home_team_en"];
-  //const char* away_team_en = doc["away_team_en"];  
-  //const char* finished = doc["finished"];
-  //const char* datatime = doc["datetime"];
+  String away_team_en = doc["away_team_en"];  
+  String finished = doc["finished"];
+  String datatime = doc["datetime"];
 
   // Print values.
-  //Serial.println(home_score);
-  //Serial.println(away_score);
+  Serial.println(home_score);
+  Serial.println(away_score);
   Serial.println(home_team_en);
-  //Serial.println(away_team_en);
-  //Serial.println(finished);
-  //Serial.println(datatime);
-  
+  Serial.println(away_team_en);
+  Serial.println(finished);
+  Serial.println(datatime);
 
- /* // Switch on the LED if an 1 was received as first character
-  if ((char)payload[0] == '1') {
-    digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
-    // but actually the LED is on; this is because it is active low on the ESP-01)
-  } else {
-    digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
-  }*/
+  //LED
+  for (int i = 0; i <= home_score-1; i++) {
+    leds[i] = CRGB ( 0, 0, 254);
+    FastLED.show();
+    delay(200);
+  }
+  for (int x = 15; x <= 14+away_score; x++) {
+    leds[x] = CRGB (255, 0, 0);
+    FastLED.show();
+    delay(200);
+  }
+
+  //servo
+  long lastTime = millis();
+  while ((finished == "true") & ( millis() - lastTime < 6000) & (home_score < away_score)){
+    servoFlag1();
+    //delay(1000);
+ }
+   while ((finished == "true") & ( millis() - lastTime < 6000) & (home_score > away_score)){
+     servoFlag2();
+  }
+   while ((finished == "true") & ( millis() - lastTime < 6000) & (home_score < away_score)){
+     myservo.write(0);
+}
+   
 
 }
 
@@ -180,3 +159,40 @@ void reconnect() {
     }
   }
 }
+
+
+
+void servoFlag1(){
+        myservo.write(0);
+        delay(1000);
+        myservo.write(180);
+        delay(1000);
+        myservo.write(0);
+        delay(1000);
+        myservo.write(180);
+        delay(1000);
+        myservo.write(0);
+        delay(1000);
+        myservo.write(180);
+        delay(1000);
+        myservo.write(45);
+      }
+
+
+void servoFlag2(){
+        myservo.write(0);
+        delay(1000);
+        myservo.write(180);
+        delay(1000);
+        myservo.write(0);
+        delay(1000);
+        myservo.write(180);
+        delay(1000);
+        myservo.write(0);
+        delay(1000);
+        myservo.write(180);
+        delay(1000);
+        myservo.write(135);
+      }
+
+
