@@ -6,7 +6,7 @@ extern PROGMEM const unsigned char gImage_Netherlands[];
 extern PROGMEM const unsigned char gImage_Senegal[];
 extern PROGMEM const unsigned char gImage_Ecuador[];
 extern PROGMEM const unsigned char gImage_Qatar[];
-extern PROGMEM const unsigned char gImage_Engalnd[];
+extern PROGMEM const unsigned char gImage_England[];
 extern PROGMEM const unsigned char gImage_USA[];
 extern PROGMEM const unsigned char gImage_Iran[];
 extern PROGMEM const unsigned char gImage_Wales[];
