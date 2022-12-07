@@ -73,6 +73,6 @@ void initialiseLCDScreen(){
 //LCD screen output
 void drawMoodOnScreen(int mood){
     Paint_Clear(BLACK);
-    Paint_DrawImage(gImage_Brazil, 0, 0, 120, 240); 
-    Paint_DrawImage(gImage_Ghana, 120, 0, 240, 240); 
+    Paint_DrawImage(gImage_Australia, 0, 0, 120, 240); 
+    Paint_DrawImage(gImage_Ghana, 120, 0, 120, 240); 
 }
