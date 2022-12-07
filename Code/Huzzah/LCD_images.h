@@ -31,4 +31,5 @@ extern PROGMEM const unsigned char gImage_Portugal[];
 extern PROGMEM const unsigned char gImage_Korean[];
 extern PROGMEM const unsigned char gImage_Uruguay[];
 extern PROGMEM const unsigned char gImage_Ghana[];
+extern PROGMEM const unsigned char gImage_Australia[];
 #endif
