@@ -9,7 +9,7 @@
 #include <FastLED.h>
 #include <Servo.h>
 #define LED_PIN     14
-#define NUM_LEDS    20
+#define NUM_LEDS    24
 
 CRGB leds[NUM_LEDS];
 Servo myservo;
@@ -132,27 +132,46 @@ void reconnect() {
 }
 
 
-//5
-int[] teamARangeMapping(int goalsNumbers){
 
 
-//Output: two integers representing the start index of NeoPixels and the end index
-[7,12]
-}
 
-
-void LEDgoals(){
+void LEDgoals1(){
+  if (a>0){
   for (int i = 0; i <= a-1; i++) {
     leds[i] = CRGB ( 0, 0, 254);
+    FastLED.setBrightness(10);
     FastLED.show();
     delay(200);
   }
-  for (int x = 15; x <= 14+b; x++) {
-    leds[x] = CRGB ( 255, 0, 0);
+  }
+  else{
+      for (int i = 0; i <= 14; i++) {
+    leds[i] = CRGB ( 0, 0, 0);
     FastLED.show();
     delay(200);
+ }
   }
 }
+void LEDgoals2(){
+
+ if (b>0){
+  for (int x = 15; x <= 14+b; x++) {
+    leds[x] = CRGB ( 255, 0, 0);
+    FastLED.setBrightness(10);
+    FastLED.show();
+  delay(200);
+  }
+ }
+ else{
+   for (int x = 15; x <= 24; x++) {
+     //change 24 when create the final version
+    leds[x] = CRGB ( 0, 0, 0);
+
+    FastLED.show();
+  delay(200); 
+ }
+}
+  }
 
 void servoFlag1(){
         myservo.write(0);
@@ -197,9 +216,8 @@ void loop() {
   }
 
   client.loop();
-
-
- LEDgoals();
+  LEDgoals1();
+  LEDgoals2();
  if ((current != used) && (a < b)){
    servoFlag1();
    used = current;
