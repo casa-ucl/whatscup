@@ -28,8 +28,9 @@ extern PROGMEM const unsigned char gImage_Switzerland[];
 extern PROGMEM const unsigned char gImage_Cameroon[];
 extern PROGMEM const unsigned char gImage_Serbia[];
 extern PROGMEM const unsigned char gImage_Portugal[];
-extern PROGMEM const unsigned char gImage_Korean[];
+extern PROGMEM const unsigned char gImage_Korea[];
 extern PROGMEM const unsigned char gImage_Uruguay[];
 extern PROGMEM const unsigned char gImage_Ghana[];
 extern PROGMEM const unsigned char gImage_Australia[];
+extern PROGMEM const unsigned char gImage_Germany[];
 #endif
