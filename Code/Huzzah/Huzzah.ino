@@ -14,7 +14,7 @@
 #include <FastLED.h>
 #include <Servo.h>
 #define LED_PIN     14
-#define NUM_LEDS    24
+#define NUM_LEDS    16
 
 CRGB leds[NUM_LEDS];
 Servo myservo;
@@ -39,16 +39,15 @@ PubSubClient client(espClient);//handle MQTT messages, pass wificlient to connec
 void setup() {
   delay(100);
 
-  startWifi(); 
+  //startWifi(); 
 
   // start MQTT server
-  client.setServer(mqtt_server, 1884);
-  client.setCallback(callback);
+  //client.setServer(mqtt_server, 1884);
+  //client.setCallback(callback);
 
-  myservo.attach(12);
-  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  //myservo.attach(12);
+ 
 
-  initialiseLCDScreen();
 
 }  
 
@@ -208,33 +207,53 @@ void servoFlag2(){
 void loop() {
   
   // handler for receiving requests to webserver
-  server.handleClient(); //?
-  if (!client.connected()) {//check if connected to MQTT
-    reconnect();
-  }
-
-  client.loop();
+  //server.handleClient(); //?
+  //if (!client.connected()) {//check if connected to MQTT
+  //  reconnect();
+  //}
+//When a new sensor reading is received from Arduino, it will be parsed and 
+  //sent over MQTT, then the LCD screen is updated accordingly
+    initialiseLCDScreen();
+Paint_DrawImage(gImage_England, 0, 0, 120, 240);
+    Paint_DrawImage(gImage_Brazil, 120, 0, 120, 240);
+  
+  delay(500);
+   SPI.end();
+   delay(500);  
+    FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  
+  
+  leds[0] = CRGB(255, 0, 0);
+  FastLED.show();
+  delay(500);  
+  leds[1] = CRGB(0, 255, 0);
+  FastLED.show();
+  delay(500);
+  leds[2] = CRGB(0, 0, 255);
+  FastLED.show();
+  delay(500);
+  leds[5] = CRGB(150, 0, 255);
+  FastLED.show();
+  delay(500);
+  leds[9] = CRGB(255, 200, 20);
+  FastLED.show();
+  delay(500);
+  leds[14] = CRGB(85, 60, 180);
+  FastLED.show();
+  delay(500);
+  leds[19] = CRGB(50, 255, 20);
+  FastLED.show();
+  delay(500);
+  
+FastLED.clearData();
+  FastLED.show();
+  delay(500);
+  //Paint_DrawImage(gImage_England, 0, 0, 120, 240);
+  delay(500);
+  //Paint_Clear(BLACK);
+  //client.loop();
   //yield();
-  LEDgoals1();
-  LEDgoals2();
- if ((current != used) && (a < b)){
-   servoFlag1();
-   used = current;
-   delay(1000);
-   //update the used one into new one
- }
-  if ((current != used) && (a > b)){
-    servoFlag2();
-    used = current;
-    delay(1000);
-    //update the used one into new one
-  }
-  if( (current != used) && (a = b)){
-    myservo.write(0);
-    used = current;
-    delay(1000);
-    //update the used one into new one
-}
+ 
  
 }
 
