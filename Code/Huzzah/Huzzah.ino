@@ -19,39 +19,76 @@
 CRGB leds[NUM_LEDS];
 Servo myservo;
 
-int a = 0;
-int b = 0;
 int pos;
-String current = "false";
-String used = "false";
 
 const char* ssid     = SECRET_SSID;
 const char* password = SECRET_PASS;
 const char* mqttuser = SECRET_MQTTUSER;
 const char* mqttpass = SECRET_MQTTPASS;
 
-ESP8266WebServer server(80);
 const char* mqtt_server = "mqtt.cetools.org";
 WiFiClient espClient;//handle wifi messages
 PubSubClient client(espClient);//handle MQTT messages, pass wificlient to connect
 //StaticJsonDocument<200> doc;// Allocate the JSON document
 
 void setup() {
+  Serial.begin(115200);
   delay(100);
-
+  initialiseLCDScreen();
   //startWifi(); 
 
   // start MQTT server
   //client.setServer(mqtt_server, 1884);
   //client.setCallback(callback);
 
-  //myservo.attach(12);
- 
-
+  myservo.attach(12);
 
 }  
 
+void loop() {
+  initialiseLCDScreen();
+  delay(500);
+  //LCD_DrawFlags(home_team_en, away_team_en);
+  Paint_DrawImage(gImage_England, 0, 0, 120, 240);
+  SPI.end();
+  delay(500);
+  String response = "{\"home_score\": 6, \"away_score\": 5,\"home_team_en\": \"Brazil\", \"away_team_en\": \"Netherlands\", \"finished\": \"false\", \"datetime\": \"2022-11-21 13:02\"}";
 
+  StaticJsonDocument<1024> doc;// Allocate the JSON document
+  
+  deserializeJson(doc, response); // Deserialize the JSON document
+
+  // Fetch values.
+  String home_score_str = doc["home_score"];
+  int home_score = home_score_str.toInt(); 
+  String away_score_str = doc["away_score"];
+  int away_score = away_score_str.toInt(); 
+
+  String home_team_en = doc["home_team_en"];
+  String away_team_en = doc["away_team_en"];  
+  String finished = doc["finished"];
+  String datatime = doc["datetime"];
+
+
+
+  delay(200);
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  NeoPixelsDisplayLeft(home_score);
+  NeoPixelsDisplayRight(away_score);
+
+  if(finished == "true"){
+    servoFlag1();
+    servoFlag2();
+  }
+  delay(5000);
+//  if (!client.connected()) {//check if connected to MQTT
+//    reconnect();
+//  }
+  
+//When a new sensor reading is received from Arduino, it will be parsed and 
+  //sent over MQTT, then the LCD screen is updated accordingly
+ 
+}
 
 void startWifi() {
   // connecting to a WiFi network
@@ -96,13 +133,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   String finished = doc["finished"];
   String datatime = doc["datetime"];
 
-  a = home_score;
-  b = away_score;
-  current = finished;
   
   //Paint_DrawImage(gImage_England, 0, 0, 120, 240);
   //Paint_DrawImage(gImage_England, 120, 0, 120, 240);
-  drawFlagOnScreen(home_team_en, away_team_en);
+  //drawFlagOnScreen(home_team_en, away_team_en);
     
 }
 
@@ -129,46 +163,42 @@ void reconnect() {
 }
 
 
-
-
-
-void LEDgoals1(){
-  if (a>0){
-  for (int i = 0; i <= a-1; i++) {
+void NeoPixelsDisplayLeft(int score){
+  if (score>0){
+  for (int i = 0; i <= score-1; i++) {
     leds[i] = CRGB ( 0, 0, 254);
-    FastLED.setBrightness(10);
+    FastLED.setBrightness(90);
     FastLED.show();
     delay(200);
   }
   }
   else{
-      for (int i = 0; i <= 14; i++) {
+      for (int i = 0; i <= 8; i++) {
     leds[i] = CRGB ( 0, 0, 0);
     FastLED.show();
     delay(200);
  }
   }
 }
-void LEDgoals2(){
 
- if (b>0){
-  for (int x = 15; x <= 14+b; x++) {
+void NeoPixelsDisplayRight(int score){
+ if (score>0){
+  for (int x = 8; x < 8+score; x++) {
     leds[x] = CRGB ( 255, 0, 0);
-    FastLED.setBrightness(10);
+    FastLED.setBrightness(90);
     FastLED.show();
   delay(200);
   }
  }
  else{
-   for (int x = 15; x <= 24; x++) {
+   for (int x = 8; x < 16; x++) {
      //change 24 when create the final version
     leds[x] = CRGB ( 0, 0, 0);
-
     FastLED.show();
-  delay(200); 
+    delay(200); 
+  }
  }
 }
-  }
 
 void servoFlag1(){
         myservo.write(0);
@@ -204,77 +234,49 @@ void servoFlag2(){
       }
 
 
-void loop() {
-  
-  // handler for receiving requests to webserver
-  //server.handleClient(); //?
-  //if (!client.connected()) {//check if connected to MQTT
-  //  reconnect();
-  //}
-//When a new sensor reading is received from Arduino, it will be parsed and 
-  //sent over MQTT, then the LCD screen is updated accordingly
-    initialiseLCDScreen();
-Paint_DrawImage(gImage_England, 0, 0, 120, 240);
-    Paint_DrawImage(gImage_Brazil, 120, 0, 120, 240);
-  
-  delay(500);
-   SPI.end();
-   delay(500);  
-    FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
-  
-  
-  leds[0] = CRGB(255, 0, 0);
-  FastLED.show();
-  delay(500);  
-  leds[1] = CRGB(0, 255, 0);
-  FastLED.show();
-  delay(500);
-  leds[2] = CRGB(0, 0, 255);
-  FastLED.show();
-  delay(500);
-  leds[5] = CRGB(150, 0, 255);
-  FastLED.show();
-  delay(500);
-  leds[9] = CRGB(255, 200, 20);
-  FastLED.show();
-  delay(500);
-  leds[14] = CRGB(85, 60, 180);
-  FastLED.show();
-  delay(500);
-  leds[19] = CRGB(50, 255, 20);
-  FastLED.show();
-  delay(500);
-  
-FastLED.clearData();
-  FastLED.show();
-  delay(500);
-  //Paint_DrawImage(gImage_England, 0, 0, 120, 240);
-  delay(500);
-  //Paint_Clear(BLACK);
-  //client.loop();
-  //yield();
- 
- 
-}
+
 
 void initialiseLCDScreen(){
   Config_Init();
   LCD_Init();
   
   LCD_SetBacklight(1000);
-  Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 0, BLACK);
+  //Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 0, BLACK);
   Paint_Clear(BLACK);
 }
 
 
-void drawFlagOnScreen(String home_flag, String away_flag){
-    //Paint_Clear(BLACK);
-    Paint_DrawImage(gImage_England, 0, 0, 120, 240);
-    Paint_DrawImage(gImage_Brazil, 120, 0, 120, 240);
-     
-   // if(home_flag=="England"){ Paint_DrawImage(gImage_England, 0, 0, 120, 240);}
-    //if(home_flag=="Brazil"){ Paint_DrawImage(gImage_Brazil, 0, 0, 120, 240);}
-   // if (away_flag=="England"){ Paint_DrawImage(gImage_England, 120, 0, 120, 240);}
-   // else if (away_flag=="Brazil"){ Paint_DrawImage(gImage_Brazil, 120, 0, 120, 240);}
+void LCD_DrawFlags(String home_flag, String away_flag){
+    const int COUNTRY_NUM = 4;
+    
+    const unsigned char** flagImagesArray = new const unsigned char*[COUNTRY_NUM];
+    flagImagesArray[0] = gImage_Brazil;
+    flagImagesArray[1] = gImage_Netherlands;
+    flagImagesArray[2] = gImage_Senegal;
+    flagImagesArray[3] = gImage_Ecuador;
+    
+    String countryNamesArray[] = { "Brazil", "Netherlands", "Senegal", "Ecuador" };
 
+    int home_index = 31;
+    int away_index = 31;
+    
+    for(int i = 0; i < COUNTRY_NUM; ++i)
+    {
+      Serial.println("i=");
+      Serial.println(i);
+      if(countryNamesArray[i] == home_flag){
+        home_index = i;
+      }
+      if(countryNamesArray[i] == away_flag){
+        away_index = i;
+      }
+    }
+    Serial.println("home_index = ");
+    Serial.println(home_index);
+
+    Serial.println("away_index = ");
+    Serial.println(away_index);
+    
+    Paint_DrawImage(gImage_Brazil, 0, 0, 120, 240);
+    Paint_DrawImage(gImage_Brazil, 120, 0, 120, 240);
     }
