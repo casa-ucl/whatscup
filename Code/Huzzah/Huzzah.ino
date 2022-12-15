@@ -46,13 +46,8 @@ void setup() {
 }  
 
 void loop() {
-  initialiseLCDScreen();
-  delay(500);
-  //LCD_DrawFlags(home_team_en, away_team_en);
-  Paint_DrawImage(gImage_England, 0, 0, 120, 240);
-  SPI.end();
-  delay(500);
-  String response = "{\"home_score\": 6, \"away_score\": 5,\"home_team_en\": \"Brazil\", \"away_team_en\": \"Netherlands\", \"finished\": \"false\", \"datetime\": \"2022-11-21 13:02\"}";
+  
+  String response = "{\"home_score\": 6, \"away_score\": 5,\"home_team_en\": \"Ecuador\", \"away_team_en\": \"Netherlands\", \"finished\": \"false\", \"datetime\": \"2022-11-21 13:02\"}";
 
   StaticJsonDocument<1024> doc;// Allocate the JSON document
   
@@ -69,7 +64,10 @@ void loop() {
   String finished = doc["finished"];
   String datatime = doc["datetime"];
 
-
+  initialiseLCDScreen();
+  delay(200);
+  LCD_DrawFlags(home_team_en, away_team_en);
+  SPI.end();
 
   delay(200);
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
@@ -241,7 +239,7 @@ void initialiseLCDScreen(){
   LCD_Init();
   
   LCD_SetBacklight(1000);
-  //Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 0, BLACK);
+  Paint_NewImage(LCD_WIDTH, LCD_HEIGHT, 0, BLACK);
   Paint_Clear(BLACK);
 }
 
@@ -277,6 +275,6 @@ void LCD_DrawFlags(String home_flag, String away_flag){
     Serial.println("away_index = ");
     Serial.println(away_index);
     
-    Paint_DrawImage(gImage_Brazil, 0, 0, 120, 240);
-    Paint_DrawImage(gImage_Brazil, 120, 0, 120, 240);
+    Paint_DrawImage(flagImagesArray[home_index], 0, 0, 120, 240);
+    Paint_DrawImage(flagImagesArray[away_index], 120, 0, 120, 240);
     }
